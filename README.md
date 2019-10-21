@@ -3,7 +3,9 @@
 ## E-commerce
 
 Api rest de Worldfit, proyecto de la Escuela de Javascript
-Servidor en puerto 8080
+Servidor en http://localhost:8080/api
+
+> **Crear el archivo `.env` basándose en el archivo `.env.example`**
 
 ## Scripts
 
