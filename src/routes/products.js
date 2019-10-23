@@ -3,11 +3,11 @@ const ProductsService = require('../services/products')
 
 function products(app) {
     const router = express.Router()
-    app.use('/api', router)
+    app.use('/api/products', router)
 
     const productsService = new ProductsService()
 
-    router.get('/listproducts', async (req, res) => {
+    router.get('/', async (req, res) => {
         try {
             const products = await productsService.getProducts(req.body)
             res.status(200).json({data: products, message: 'Products listed'})
@@ -17,9 +17,9 @@ function products(app) {
         }
     })
 
-    router.get('/showproduct', async (req, res) => {
+    router.get('/:productId', async (req, res) => {
         try {
-            const product = await productsService.getOneProduct(req.body)
+            const product = await productsService.getOneProduct(req.params)
             res.status(200).json({data: product, message: 'Product retrieved'})
         }catch(err) {
             console.log(`error at: ${err}`)
@@ -27,7 +27,7 @@ function products(app) {
         }
     })
 
-    router.post('/createproduct', async (req, res) => {
+    router.post('/', async (req, res) => {
         const { body: product } = req
 
         try{
@@ -39,11 +39,23 @@ function products(app) {
         }
     })
 
-    router.put('/editproduct', async (req, res) => {
+    router.put('/:productId', async (req, res) => {
+        const { productId } = req.params
+        const { body: product } = req
 
         try{
-            const updatedProduct = await productsService.updateProduct(req.body)
+            const updatedProduct = await productsService.updateProduct(productId, product)
             res.status(200).json({data: updatedProduct, message: 'product updated'})
+        }catch(err){
+            console.log(`error at: ${err}`)
+            res.status(500).json({message: err})
+        }
+    })
+
+    router.delete('/:productId', async (req, res) => {
+        try{
+            const deletedProduct = await productsService.deleteProduct(req.params)
+            res.status(200).json({data: deletedProduct, message: 'product deleted'})
         }catch(err){
             console.log(`error at: ${err}`)
             res.status(500).json({message: err})

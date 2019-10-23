@@ -4,8 +4,6 @@
 
 Api rest de Worldfit, proyecto de la Escuela de Javascript
 
-Servidor en http://localhost:8080/api
-
 ## Instalación
 
 ```shell
@@ -13,6 +11,8 @@ npm i
 ```
 
 Crear el archivo `.env` basándose en el archivo `.env.example`
+
+Servidor en el puerto 8080
 
 ## Scripts
 

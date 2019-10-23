@@ -45,8 +45,8 @@ class ProductsService {
         return products || []
     }
 
-    async getOneProduct({ id }) {
-        const query = {_id: ObjectId(id)}
+    async getOneProduct({ productId }) {
+        const query = {_id: ObjectId(productId)}
 
         const product = await this.mongoDB.getOne(this.collection, query)
         return product || {}
@@ -57,9 +57,14 @@ class ProductsService {
         return createdProductId
     }
 
-    async updateProduct({ id, product }){
-        const updatedProductId = await this.mongoDB.update(this.collection, ObjectId(id), product)
+    async updateProduct(productId, product){
+        const updatedProductId = await this.mongoDB.update(this.collection, ObjectId(productId), product)
         return updatedProductId
+    }
+
+    async deleteProduct({ productId }){
+        const deletedProductId = await this.mongoDB.delete(this.collection, {_id: ObjectId(productId)})
+        return deletedProductId
     }
 }
 
