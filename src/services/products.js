@@ -44,6 +44,23 @@ class ProductsService {
         const products = await this.mongoDB.get(this.collection, query)
         return products || []
     }
+
+    async getOneProduct({ id }) {
+        const query = {_id: ObjectId(id)}
+
+        const product = await this.mongoDB.getOne(this.collection, query)
+        return product || {}
+    }
+
+    async createProduct({ product }) {
+        const createdProductId = await this.mongoDB.create(this.collection, product)
+        return createdProductId
+    }
+
+    async updateProduct({ id, product }){
+        const updatedProductId = await this.mongoDB.update(this.collection, ObjectId(id), product)
+        return updatedProductId
+    }
 }
 
 module.exports = ProductsService
