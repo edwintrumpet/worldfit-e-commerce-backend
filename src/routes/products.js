@@ -1,7 +1,7 @@
 const express = require('express')
 const ProductsService = require('../services/products')
 
-function products(app) {
+function productsRoutes(app) {
     const router = express.Router()
     app.use('/api/products', router)
 
@@ -63,4 +63,4 @@ function products(app) {
     })
 }
 
-module.exports = products
+module.exports = productsRoutes

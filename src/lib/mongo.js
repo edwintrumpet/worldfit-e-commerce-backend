@@ -4,12 +4,18 @@ const { config } = require('../config/')
 const USER = encodeURIComponent(config.dbUser)
 const PASSWORD = encodeURIComponent(config.dbPassword)
 const DB_NAME = config.dbName
+const DB_LOCAL = config.dbLocal
+let mongoUri
 
-const MONGO_URI = `mongodb+srv://${USER}:${PASSWORD}@${config.dbHost}:${config.dbPort}/${DB_NAME}?retryWrites=true&w=majority`
+if(DB_LOCAL){
+    mongoUri = DB_LOCAL
+}else{
+    mongoUri = `mongodb+srv://${USER}:${PASSWORD}@${config.dbHost}:${config.dbPort}/${DB_NAME}?retryWrites=true&w=majority`
+}
 
 class MongoLib {
     constructor(){
-        this.client = new MongoClient(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+        this.client = new MongoClient(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
         this.dbName = DB_NAME
     }
 
@@ -21,7 +27,7 @@ class MongoLib {
                         reject(err)
                     }
 
-                    console.log('Connected succesfully to Mongo')
+                    console.log(`Connected succesfully to Mongo at ${mongoUri}`)
                     resolve(this.client.db(this.dbName))
                 })
             })
@@ -29,15 +35,15 @@ class MongoLib {
         return MongoLib.connection
     }
 
-    get(collection, query) {
+    get(collection, query, options) {
         return this.connect().then(db => {
-            return db.collection(collection).find(query).toArray()
+            return db.collection(collection).find(query, options).toArray()
         })
     }
 
-    getOne(collection, id) {
+    getOne(collection, id, options) {
         return this.connect().then(db => {
-            return db.collection(collection).findOne(id)
+            return db.collection(collection).findOne(id, options)
         })
     }
 

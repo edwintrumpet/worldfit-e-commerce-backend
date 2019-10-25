@@ -13,7 +13,7 @@
         - tags: array of strings
     - _post_  
     Crea un nuevo producto y acepta por _body_ las características del producto
-- _/api/products:productId_  
+- _/api/products/:productId_  
     Métodos
     - _get_  
     Devuelve el producto especificado
