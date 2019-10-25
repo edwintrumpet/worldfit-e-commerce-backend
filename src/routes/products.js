@@ -42,7 +42,6 @@ function productsRoutes(app) {
     router.put('/:productId', async (req, res) => {
         const { productId } = req.params
         const { body: product } = req
-
         try{
             const updatedProduct = await productsService.updateProduct(productId, product)
             res.status(200).json({data: updatedProduct, message: 'product updated'})

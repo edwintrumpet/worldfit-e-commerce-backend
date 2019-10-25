@@ -41,9 +41,15 @@ class MongoLib {
         })
     }
 
-    getOne(collection, id, options) {
+    getOne(collection, query, options) {
         return this.connect().then(db => {
-            return db.collection(collection).findOne(id, options)
+            return db.collection(collection).findOne(query, options)
+        })
+    }
+
+    getOneAndModify(collection, query, update, options) {
+        return this.connect().then(db => {
+            return db.collection(collection).findOneAndUpdate(query, {$set: update}, options)
         })
     }
 
@@ -59,10 +65,10 @@ class MongoLib {
         }).then(result => result.insertedId || id)
     }
 
-    delete(collection, id) {
+    delete(collection, query) {
         return this.connect().then(db => {
-            return db.collection(collection).deleteOne(id)
-        }).then(() => id)
+            return db.collection(collection).deleteOne(query)
+        }).then(() => query)
     }
 }
 
