@@ -6,7 +6,7 @@ const isAuth = (req, res, next) => {
         if(token==='something'){
             // payload of token
             req.token = {
-                id: '5db23de5bfd03b703026f3ee'
+                id: '1db23de5bfd03b703026f3ee'
             }
             next()
         }else{

@@ -1,5 +1,6 @@
 const MongoLib = require('../lib/mongo')
 const { ObjectId } = require('mongodb')
+const Boom = require('@hapi/boom')
 
 class AuthServices {
     constructor(){
@@ -14,18 +15,21 @@ class AuthServices {
             _id: 0,
             password: 0
         }
-
         const user = await this.mongoDB.getOne(this.collection, query, options)
-        if(user.deleted===true){
-            return {}
+        if(user){
+            if(user.deleted===true){
+                throw Boom.notFound('This user was deleted')
+            }else{
+                return user
+            }
         }else{
-            return user || {}
+            throw Boom.notFound('This user does not exist')
         }
     }
 
     async visitUser ({ id }, { host }) {
-        const authorization = await this.getAuthorization(id, host, 'visitUser')
-        if(authorization){
+        const authorization = await this.getAuthorization(id, 'visitUser')
+        if(authorization || id===host){
             const query = {_id: ObjectId(host)}
             let options = {}
             options.projection = {
@@ -33,15 +37,52 @@ class AuthServices {
                 password: 0
             }
             const user = await this.mongoDB.getOne(this.collection, query, options)
-            if(user.deleted===true && id==host){
-                return {}
-            }else{
-                return user || {}
-            }
+            return user || {}
         }else{
-            return {
-                message: 'Unauthorized access'
+            throw Boom.forbidden(`You're not authorized to see other users`)
+        }
+    }
+
+    async getManyUsers ({
+        id,
+        name,
+        email,
+        rol,
+        nextId
+    }) {
+        const authorization = await this.getAuthorization(id, 'visitUser')
+        if(authorization){
+            const nameRegExp = new RegExp(".*" + name + ".*")
+            const options = {}
+            options.projection = {
+                name: 1,
+                email: 1,
+                rol: 1
             }
+            options.limit = 20
+            options.sort = {_id: 1, name: 0, email: 0}
+
+            const query = {}
+
+            if(name){
+                query.name = {$regex: nameRegExp}
+            }
+            if(email){
+                query.email = email
+            }
+            if(rol){
+                query.rol = rol
+            }
+            if(id){
+                query._id = ObjectId(id)
+            }else if(nextId){
+                query.id = {$lt: ObjectId(nextId)}
+            }
+            
+            const users = await this.mongoDB.get(this.collection, query, options)
+            return users || []
+        }else{
+            throw Boom.forbidden(`You're not authorized to see other users`)
         }
     }
 
@@ -50,15 +91,18 @@ class AuthServices {
         const options = {}
         const today = new Date()
         const update = {lastAccess: today}
-
         const user = await this.mongoDB.getOneAndModify(this.collection, query, update, options)
-        if(user.value.password === password){
-            return {
-                ...user.value,
-                password: null
+        if(user.value){
+            if(user.value.password === password){
+                return {
+                    ...user.value,
+                    password: null
+                }
+            }else{
+                throw Boom.unauthorized('Invalid password')
             }
         }else{
-            return {message: 'Unauthorized access'}
+            throw Boom.unauthorized('This user does not exist')
         }
     }
 
@@ -99,7 +143,7 @@ class AuthServices {
             }
             data.updatedAt = today
         }else{
-            const authorization = this.getAuthorization(id, null, 'editUser')
+            const authorization = this.getAuthorization(id, 'editUser')
             if(authorization){
                 if(rol){
                     data.rol = rol
@@ -110,7 +154,21 @@ class AuthServices {
                 if(deleted){
                     data.deleted = deleted
                 }
+                if(name){
+                    throw Boom.forbidden(`You're not authorized to update name`)
+                }
+                if(email){
+                    throw Boom.forbidden(`You're not authorized to update email`)
+                }
+                if(password){
+                    throw Boom.forbidden(`You're not authorized to update password`)
+                }
+                if(deleted){
+                    data.deleted = deleted
+                }
                 data.updatedAt = today
+            }else{
+                throw Boom.forbidden(`You're not authorized to update users info`)
             }
         }
         const updatedUser = await this.mongoDB.update(this.collection, ObjectId(toEdit), data)
@@ -118,16 +176,16 @@ class AuthServices {
     }
 
     async deleteUser(id, toDelete) {
-        const authorization = this.getAuthorization(id, null, 'deleteUser')
+        const authorization = this.getAuthorization(id, 'deleteUser')
         if(authorization){
             const deletedUser = await this.mongoDB.delete(this.collection, {_id: ObjectId(toDelete)})
             return deletedUser
         }else{
-            return {message: 'You do not have authorization to delete'}
+            throw Boom.forbidden(`You're not authorized to delete users`)
         }
     }
 
-    async getAuthorization(id, host, access) {
+    async getAuthorization(id, access) {
         let value = false
         let query = {_id: ObjectId(id)}
         let options = {}
@@ -136,9 +194,7 @@ class AuthServices {
             permission: 1
         }
         const authorizationsArray = await this.mongoDB.getOne(this.collection, query, options)
-        if(id===host){
-            value=true
-        }else if(authorizationsArray.permission){
+        if(authorizationsArray.permission){
             for (let item of authorizationsArray.permission){
                 if(item==='all' || item==access){
                     value=true

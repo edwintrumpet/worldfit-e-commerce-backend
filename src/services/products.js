@@ -1,5 +1,6 @@
 const MongoLib = require('../lib/mongo')
 const { ObjectId } = require('mongodb')
+// const Boom = require('@hapi/boom')
 
 class ProductsService {
     constructor() {
@@ -26,7 +27,7 @@ class ProductsService {
             images: 1,
             price: 1
         }
-        options.limit = 2
+        options.limit = 10
 
         switch(orderBy){
             case 'nameProduct':
@@ -45,25 +46,14 @@ class ProductsService {
                 options.sort = {_id: 1}
         }
 
-        if(orderBy){
-            switch(orderBy){
-                case 'nameProduct':
-                    
-            }
-        }else{
-            options.sort = {_id: 1}
-        }
-
         let query = {}
 
         if(nameProduct){
             query.sexo = {$regex: nameProductRegExp}
         }
-
         if(description){
             query.nombre = {$regex: descriptionRegExp}
         }
-
         if(minPrice && maxPrice){
             query.price = {$gte: parseInt(minPrice), $lte: parseInt(maxPrice)}
         }else if(minPrice){
@@ -71,15 +61,12 @@ class ProductsService {
         }else if(maxPrice){
             query.price = {$lte: parseInt(maxPrice)}
         }
-
         if(gender){
             query.gender = gender
         }
-
         if(tags){
             query.tags = {$in: tags}
         }
-
         if(id){
             query._id = ObjectId(id)
         }else if(nextId){
@@ -93,7 +80,6 @@ class ProductsService {
     async getOneProduct({ productId }) {
         const query = {_id: ObjectId(productId)}
         const options = {}
-
         const product = await this.mongoDB.getOne(this.collection, query, options)
         return product || {}
     }
