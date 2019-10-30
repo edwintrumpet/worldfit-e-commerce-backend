@@ -1,7 +1,8 @@
 const express = require('express')
 const { config } = require('./config')
+const authApi = require('./routes/auth')
 const productsRoutes = require('./routes/products')
-const authRoutes = require('./routes/auth')
+const usersRoutes = require('./routes/users')
 const { logErrors, wrapErrors, errorHandler } = require('./utils/middlewares/errorHandlers')
 const notFoundHandler = require('./utils/middlewares/notFoundHandler')
 
@@ -11,7 +12,8 @@ app.use(express.urlencoded({extended: false}));
 app.use(express.json())
 
 // Routes
-authRoutes(app)
+authApi(app)
+usersRoutes(app)
 productsRoutes(app)
 app.use(notFoundHandler)
 

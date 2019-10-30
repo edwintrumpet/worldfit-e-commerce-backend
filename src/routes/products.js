@@ -1,5 +1,15 @@
 const express = require('express')
+const passport = require('passport')
 const ProductsService = require('../services/products')
+const {
+    productIdSchema,
+    createProductSchema,
+    updateProductSchema
+} = require('../utils/schemas/products')
+const validationHandler = require('../utils/middlewares/validationHandler')
+const scopesValidationHandler = require('../utils/middlewares/scopesValidationHandler')
+// JWT strategy
+require('../utils/auth/strategies/jwt')
 
 function productsRoutes(app) {
     const router = express.Router()
@@ -15,7 +25,10 @@ function productsRoutes(app) {
         }
     })
 
-    router.get('/:productId', async (req, res, next) => {
+    router.get(
+        '/:productId',
+        validationHandler({ productId: productIdSchema }, 'params'),
+        async (req, res, next) => {
         try {
             const product = await productsService.getOneProduct(req.params)
             res.status(200).json({data: product, message: 'Product retrieved'})
@@ -24,31 +37,46 @@ function productsRoutes(app) {
         }
     })
 
-    router.post('/', async (req, res, next) => {
-        const { body: product } = req
+    router.post(
+        '/',
+        passport.authenticate('jwt', { session: false }),
+        scopesValidationHandler(['create:products']),
+        validationHandler(createProductSchema),
+        async (req, res, next) => {
         try{
-            const createdMovieId = await productsService.createProduct({product})
-            res.status(201).json({data: createdMovieId, message: "product created"})
+            const createdMovieId = await productsService.createProduct(req.body)
+            res.status(201).json({data: createdMovieId, message: "Product created"})
         }catch(err){
             next(err)
         }
     })
 
-    router.put('/:productId', async (req, res, next) => {
+    router.put(
+        '/:productId',
+        passport.authenticate('jwt', { session: false }),
+        scopesValidationHandler(['edit:products']),
+        validationHandler({ productId: productIdSchema }, 'params'),
+        validationHandler(updateProductSchema),
+        async (req, res, next) => {
         const { productId } = req.params
         const { body: product } = req
         try{
             const updatedProduct = await productsService.updateProduct(productId, product)
-            res.status(200).json({data: updatedProduct, message: 'product updated'})
+            res.status(200).json({data: updatedProduct, message: 'Product updated'})
         }catch(err){
             next(err)
         }
     })
 
-    router.delete('/:productId', async (req, res, next) => {
+    router.delete(
+        '/:productId',
+        passport.authenticate('jwt', { session: false }),
+        scopesValidationHandler(['delete:products']),
+        validationHandler({ productId: productIdSchema }, 'params'),
+        async (req, res, next) => {
         try{
             const deletedProduct = await productsService.deleteProduct(req.params)
-            res.status(200).json({data: deletedProduct, message: 'product deleted'})
+            res.status(200).json({data: deletedProduct, message: 'Product deleted'})
         }catch(err){
             next(err)
         }

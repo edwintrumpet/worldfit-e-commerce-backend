@@ -9,8 +9,9 @@
         - description: string
         - minPrice: number
         - maxPrice: number
-        - gender: string
         - tags: array of strings
+        - nextId: string --> paginación
+        - orderBy: string
     - _post_  
     Crea un nuevo producto y acepta por _body_ las características del producto
 - _/api/products/:productId_  

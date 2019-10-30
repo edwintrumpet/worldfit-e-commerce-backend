@@ -13,7 +13,6 @@ class ProductsService {
         description,
         minPrice,
         maxPrice,
-        gender,
         tags,
         id,
         nextId,
@@ -27,23 +26,23 @@ class ProductsService {
             images: 1,
             price: 1
         }
-        options.limit = 10
+        // options.limit = 10
 
         switch(orderBy){
             case 'nameProduct':
-                options.sort = {nameProduct:0, _id: 1}
+                options.sort = {nameProduct:1, _id: -1}
                 break
             case 'nameProductReverse':
-                options.sort = {nameProduct:1, _id: 1}
+                options.sort = {nameProduct:-1, _id: -1}
                 break
             case 'price':
-                options.sort = {price:0, _id: 1}
+                options.sort = {price:1, _id: -1}
                 break
             case 'priceReverse':
-                options.sort = {price:1, _id: 1}
+                options.sort = {price:-1, _id: -1}
                 break
             default:
-                options.sort = {_id: 1}
+                options.sort = {_id: -1}
         }
 
         let query = {}
@@ -61,16 +60,13 @@ class ProductsService {
         }else if(maxPrice){
             query.price = {$lte: parseInt(maxPrice)}
         }
-        if(gender){
-            query.gender = gender
-        }
         if(tags){
             query.tags = {$in: tags}
         }
         if(id){
             query._id = ObjectId(id)
         }else if(nextId){
-            query.id = {$lt: ObjectId(nextId)}
+            query._id = {$lt: ObjectId(nextId)}
         }
 
         const products = await this.mongoDB.get(this.collection, query, options)
@@ -78,13 +74,11 @@ class ProductsService {
     }
 
     async getOneProduct({ productId }) {
-        const query = {_id: ObjectId(productId)}
-        const options = {}
-        const product = await this.mongoDB.getOne(this.collection, query, options)
+        const product = await this.mongoDB.getOne(this.collection, {_id: ObjectId(productId)}, {})
         return product || {}
     }
 
-    async createProduct({ product }) {
+    async createProduct( product ) {
         const createdProductId = await this.mongoDB.create(this.collection, product)
         return createdProductId
     }
