@@ -2,6 +2,7 @@ const express = require('express')
 const passport = require('passport')
 const ProductsService = require('../services/products')
 const {
+    listProductsSchema,
     productIdSchema,
     createProductSchema,
     updateProductSchema
@@ -16,7 +17,10 @@ function productsRoutes(app) {
     app.use('/api/products', router)
     const productsService = new ProductsService()
 
-    router.get('/', async (req, res, next) => {
+    router.get(
+        '/',
+        validationHandler(listProductsSchema),
+        async (req, res, next) => {
         try {
             const products = await productsService.getProducts(req.body)
             res.status(200).json({data: products, message: 'Products listed'})
@@ -39,9 +43,9 @@ function productsRoutes(app) {
 
     router.post(
         '/',
+        validationHandler(createProductSchema),
         passport.authenticate('jwt', { session: false }),
         scopesValidationHandler(['create:products']),
-        validationHandler(createProductSchema),
         async (req, res, next) => {
         try{
             const createdMovieId = await productsService.createProduct(req.body)
@@ -53,10 +57,10 @@ function productsRoutes(app) {
 
     router.put(
         '/:productId',
-        passport.authenticate('jwt', { session: false }),
-        scopesValidationHandler(['edit:products']),
         validationHandler({ productId: productIdSchema }, 'params'),
         validationHandler(updateProductSchema),
+        passport.authenticate('jwt', { session: false }),
+        scopesValidationHandler(['edit:products']),
         async (req, res, next) => {
         const { productId } = req.params
         const { body: product } = req
@@ -70,9 +74,9 @@ function productsRoutes(app) {
 
     router.delete(
         '/:productId',
+        validationHandler({ productId: productIdSchema }, 'params'),
         passport.authenticate('jwt', { session: false }),
         scopesValidationHandler(['delete:products']),
-        validationHandler({ productId: productIdSchema }, 'params'),
         async (req, res, next) => {
         try{
             const deletedProduct = await productsService.deleteProduct(req.params)

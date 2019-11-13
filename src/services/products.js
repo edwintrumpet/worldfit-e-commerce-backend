@@ -48,10 +48,10 @@ class ProductsService {
         let query = {}
 
         if(nameProduct){
-            query.sexo = {$regex: nameProductRegExp}
+            query.nameProduct = {$regex: nameProductRegExp}
         }
         if(description){
-            query.nombre = {$regex: descriptionRegExp}
+            query.description = {$regex: descriptionRegExp}
         }
         if(minPrice && maxPrice){
             query.price = {$gte: parseInt(minPrice), $lte: parseInt(maxPrice)}
