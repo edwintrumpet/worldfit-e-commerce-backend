@@ -6,10 +6,8 @@ const UsersService = require('../../../services/users')
 
 passport.use(new BasicStrategy(async (email, password, cb) => {
     const userService = new UsersService()
-
     try {
         const user = await userService.getWithPassword({ email })
-
         if(!user){
             return cb(Boom.unauthorized(), false)
         }

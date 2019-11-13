@@ -1,27 +1,27 @@
 const passport = require('passport')
 const { Strategy, ExtractJwt } = require('passport-jwt')
-const Boom = require('@hapi/boom')
-const UsersService = require('../../../services/users')
+// const debug = require('debug')('app:jwt')
 const { config } = require('../../../config')
+
+const cookieExtractor = req => {
+    let token = null
+    if(req && req.cookies){
+        token = req.cookies['token']
+    }
+    return token
+}
 
 passport.use(
     new Strategy({
         secretOrKey: config.authJwtSecret,
-        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
+        jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor])
     },
     async (tokenPayload, cb) => {
-        const usersService = new UsersService()
         try {
-            const user = await usersService.getWithPassword({ email: tokenPayload.email })
-            if(!user){
-                return cb(Boom.unauthorized(), false)
-            }
-
-            delete user.password
-
-            cb(null, {...user, scopes: tokenPayload.scopes})
+            cb(null, { id: tokenPayload.sub, scopes: tokenPayload.scopes})
         }catch(err){
             return cb(err)
         }
     }
-    ))
+    )
+)

@@ -1,4 +1,6 @@
 const express = require('express')
+const cookieParser = require('cookie-parser')
+const debug = require('debug')('app:server')
 const { config } = require('./config')
 const authApi = require('./routes/auth')
 const productsRoutes = require('./routes/products')
@@ -7,6 +9,7 @@ const { logErrors, wrapErrors, errorHandler } = require('./utils/middlewares/err
 const notFoundHandler = require('./utils/middlewares/notFoundHandler')
 
 const app = express()
+app.use(cookieParser())
 
 app.use(express.urlencoded({extended: false}));
 app.use(express.json())
@@ -23,5 +26,5 @@ app.use(wrapErrors)
 app.use(errorHandler)
 
 app.listen(config.port, () => {
-    console.log(`Server on http://localhost:${config.port}`)
+    debug(`Server on http://localhost:${config.port}`)
 })

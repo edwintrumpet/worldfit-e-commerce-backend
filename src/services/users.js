@@ -89,7 +89,8 @@ class UsersServices {
         const user = {
             ...body,
             password: hashedPassword,
-            createdAt: today
+            createdAt: today,
+            rol: body.rol || 'client'
         }
         const createdUser = await this.mongoDB.create(this.collection, user)
         return createdUser
@@ -102,7 +103,6 @@ class UsersServices {
             password,
             deleted
         } = body
-        const hashedPassword = await bcrypt.hash(password, 10)
         let data = {}
         const today = new Date()
         if(name){
@@ -112,6 +112,7 @@ class UsersServices {
             data.email = email
         }
         if(password){
+            const hashedPassword = await bcrypt.hash(password, 10)
             data.password = hashedPassword
         }
         if(deleted){

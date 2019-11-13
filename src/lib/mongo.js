@@ -1,6 +1,7 @@
 const { MongoClient } = require('mongodb')
+const debug = require('debug')('app:db')
+const Boom = require('@hapi/boom')
 const { config } = require('../config/')
-
 const USER = encodeURIComponent(config.dbUser)
 const PASSWORD = encodeURIComponent(config.dbPassword)
 const DB_NAME = config.dbName
@@ -27,7 +28,7 @@ class MongoLib {
                         reject(err)
                     }
 
-                    console.log(`Connected succesfully to Mongo at ${mongoUri}`)
+                    debug(`Connected succesfully to Mongo at ${mongoUri}`)
                     resolve(this.client.db(this.dbName))
                 })
             })
@@ -56,7 +57,15 @@ class MongoLib {
     create(collection, data) {
         return this.connect().then(db => {
             return db.collection(collection).insertOne(data)
-        }).then(result => result.insertedId)
+        })
+        .then(result => result.insertedId)
+        .catch(err => {
+            if(err.code === 11000){
+                throw Boom.badRequest('This email already exists')
+            }else{
+                throw Boom.internal()
+            }
+        })
     }
 
     update(collection, id, data) {
