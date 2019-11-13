@@ -34,10 +34,19 @@ const updateMyUserSchema = {
     deleted: joi.boolean()
 }
 
+const updateUsersSchema = {
+    name: userNameSchema,
+    email: userEmailSchema,
+    password: userPasswordSchema,
+    deleted: joi.boolean(),
+    rol: userRolSchema
+}
+
 module.exports = {
     userIdSchema,
     createClientSchema,
     createUserSchema,
     listUsersSchema,
-    updateMyUserSchema
+    updateMyUserSchema,
+    updateUsersSchema
 }

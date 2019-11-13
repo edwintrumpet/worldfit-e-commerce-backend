@@ -6,7 +6,8 @@ const {
     createUserSchema,
     listUsersSchema,
     userIdSchema,
-    updateMyUserSchema
+    updateMyUserSchema,
+    updateUsersSchema
 } = require('../utils/schemas/users')
 const scopesValidationHandler = require('../utils/middlewares/scopesValidationHandler')
 // JWT Strategy
@@ -86,7 +87,13 @@ function usersRoutes(app) {
         }
     })
 
-    router.put('/:userId', async (req, res, next) => {
+    router.put(
+        '/:userId',
+        validationHandler({userId: userIdSchema}, 'params'),
+        validationHandler(updateUsersSchema),
+        passport.authenticate('jwt', { session: false }),
+        scopesValidationHandler(['editother:users']),
+        async (req, res, next) => {
         const { body } = req
         const { userId: id } = req.params
         try{
@@ -97,7 +104,12 @@ function usersRoutes(app) {
         }
     })
 
-    router.delete('/:userId', async (req, res, next) => {
+    router.delete(
+        '/:userId',
+        validationHandler({userId: userIdSchema}, 'params'),
+        passport.authenticate('jwt', { session: false }),
+        scopesValidationHandler(['delete:users']),
+        async (req, res, next) => {
         const { userId } = req.params
         try{
             const deletedUser = await usersServices.deleteUser(userId)

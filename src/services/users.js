@@ -131,7 +131,6 @@ class UsersServices {
             deleted,
             rol
         } = body
-        const hashedPassword = await bcrypt.hash(password, 10)
         let data = {}
         const today = new Date()
         if(name){
@@ -141,6 +140,7 @@ class UsersServices {
             data.email = email
         }
         if(password){
+            const hashedPassword = await bcrypt.hash(password, 10)
             data.password = hashedPassword
         }
         if(deleted){
