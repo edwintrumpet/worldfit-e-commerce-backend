@@ -3,14 +3,25 @@
 ## E-commerce
 
 Api rest de Worldfit, proyecto de la Escuela de Javascript
-Servidor en http://localhost:8080/api
 
-> **Crear el archivo `.env` basándose en el archivo `.env.example`**
+## Instalación
+
+```shell
+npm i
+```
+
+Crear el archivo `.env` basándose en el archivo `.env.example`
+
+Servidor en el puerto 8080
 
 ## Scripts
 
 - `npm run dev`: Servidor en modo desarrollo
 - `npm start`: Servidor en modo producción
+
+## Rutas
+
+[Ver rutas](./docs/rutas.md)
 
 ## Autores
 
@@ -23,4 +34,4 @@ Derechos reservados
 
 ## Configuración del entorno de desarrollo
 
-[Ver más](./docs/procesoDeConfiguracion.md)
+[Ver configuración de entorno de desarrollo](./docs/procesoDeConfiguracion.md)
