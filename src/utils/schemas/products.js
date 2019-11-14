@@ -45,5 +45,6 @@ module.exports = {
     productIdSchema,
     listProductsSchema,
     createProductSchema,
-    updateProductSchema
+    updateProductSchema,
+    productPriceSchema
 }

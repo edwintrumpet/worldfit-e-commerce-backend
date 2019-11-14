@@ -11,6 +11,7 @@ const rootScopes = [
     'editother:users',
     'delete:users',
     'list:sales',
+    'detail:sales',
     'listown:sales',
     'listother:sales',
     'create:sales',
@@ -28,6 +29,7 @@ const adminScopes = [
     'getother:users',
     'editown:users',
     'list:sales',
+    'detail:sales',
     'listown:sales',
     'listother:sales',
     'create:sales',
@@ -45,6 +47,7 @@ const collaboratorScopes = [
     'getother:users',
     'editown:users',
     'list:sales',
+    'detail:sales',
     'listown:sales',
     'listother:sales',
     'create:sales'

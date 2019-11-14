@@ -5,6 +5,7 @@ const { config } = require('./config')
 const authApi = require('./routes/auth')
 const productsRoutes = require('./routes/products')
 const usersRoutes = require('./routes/users')
+const salesRoutes = require('./routes/sales')
 const { logErrors, wrapErrors, errorHandler } = require('./utils/middlewares/errorHandlers')
 const notFoundHandler = require('./utils/middlewares/notFoundHandler')
 
@@ -18,6 +19,7 @@ app.use(express.json())
 authApi(app)
 usersRoutes(app)
 productsRoutes(app)
+salesRoutes(app)
 app.use(notFoundHandler)
 
 // Error middlewares
