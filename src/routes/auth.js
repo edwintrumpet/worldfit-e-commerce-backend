@@ -67,6 +67,13 @@ function authApi(app){
             next(err)
         }
     })
+
+    router.post(
+        '/log-out',
+        (req, res) => {
+            res.clearCookie('token').status(200).json({ message: 'Session ended' })
+        }
+    )
 }
 
 module.exports = authApi

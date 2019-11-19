@@ -21,7 +21,10 @@ class UsersServices {
             if(user.deleted===true){
                 throw Boom.notFound('This user was deleted')
             }else{
-                return user
+                return {
+                    ...user,
+                    id
+                }
             }
         }else{
             throw Boom.notFound('This user does not exist')

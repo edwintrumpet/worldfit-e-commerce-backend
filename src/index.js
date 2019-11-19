@@ -11,7 +11,10 @@ const { logErrors, wrapErrors, errorHandler } = require('./utils/middlewares/err
 const notFoundHandler = require('./utils/middlewares/notFoundHandler')
 
 const app = express()
-app.use(cors())
+app.use(cors({
+    origin: true,
+    credentials: true
+}))
 app.use(cookieParser())
 
 app.use(express.urlencoded({extended: false}));
