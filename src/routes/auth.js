@@ -9,6 +9,7 @@ const { createClientSchema } = require('../utils/schemas/users')
 const scopes = require('../utils/auth/scopes')
 // Basic Strategy
 require('../utils/auth/strategies/basic')
+const { nextYear } = require('../utils/dates')
 
 function authApi(app){
     const router = express.Router()
@@ -37,7 +38,8 @@ function authApi(app){
                     const token = jwt.sign(payload, config.authJwtSecret, {expiresIn: '15m'})
                     return res.cookie('token', token, {
                         httpOnly: !config.dev,
-                        secure: !config.dev
+                        secure: !config.dev,
+                        expires: nextYear()
                     }).status(200).json({user: {id, name, email, rol}})
                 })
             }catch(err){
@@ -59,7 +61,8 @@ function authApi(app){
             const token = jwt.sign(payload, config.authJwtSecret, {expiresIn: '15m'})
             res.cookie('token', token, {
                 httpOnly: !config.dev,
-                secure: !config.dev
+                secure: !config.dev,
+                expires: nextYear()
             }).status(201).json(
                 { data: { id: createdUserId, rol: 'client' }, message: 'User created' }
             )
