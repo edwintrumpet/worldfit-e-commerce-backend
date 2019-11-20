@@ -27,7 +27,8 @@ const createProductSchema = {
     nameProduct: productNameSchema.required(),
     images: productImagesSchema,
     description: productDescriptionSchema,
-    price: productPriceSchema.required(),
+    minPrice: productPriceSchema,
+    maxPrice: productPriceSchema.required(),
     tags: productTagsSchema,
     inStock: productInStockSchema
 }
@@ -36,7 +37,8 @@ const updateProductSchema = {
     nameProduct: productNameSchema,
     images: productImagesSchema,
     description: productDescriptionSchema,
-    price: productPriceSchema,
+    minPrice: productPriceSchema,
+    maxPrice: productPriceSchema,
     tags: productTagsSchema,
     inStock: productInStockSchema
 }

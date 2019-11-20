@@ -24,7 +24,9 @@ class ProductsService {
         options.projection = {
             nameProduct: 1,
             images: 1,
-            price: 1
+            minPrice: 1,
+            maxPrice: 1,
+            tags: 1
         }
         // options.limit = 10
 
@@ -36,10 +38,10 @@ class ProductsService {
                 options.sort = {nameProduct:-1, _id: -1}
                 break
             case 'price':
-                options.sort = {price:1, _id: -1}
+                options.sort = {maxPrice:1, _id: -1}
                 break
             case 'priceReverse':
-                options.sort = {price:-1, _id: -1}
+                options.sort = {maxPrice:-1, _id: -1}
                 break
             default:
                 options.sort = {_id: -1}
@@ -54,11 +56,11 @@ class ProductsService {
             query.description = {$regex: descriptionRegExp}
         }
         if(minPrice && maxPrice){
-            query.price = {$gte: parseInt(minPrice), $lte: parseInt(maxPrice)}
+            query.maxPrice = {$gte: parseInt(minPrice), $lte: parseInt(maxPrice)}
         }else if(minPrice){
-            query.price = {$gte: parseInt(minPrice)}
+            query.maxPrice = {$gte: parseInt(minPrice)}
         }else if(maxPrice){
-            query.price = {$lte: parseInt(maxPrice)}
+            query.maxPrice = {$lte: parseInt(maxPrice)}
         }
         if(tags){
             query.tags = {$in: tags}
@@ -69,7 +71,15 @@ class ProductsService {
             query._id = {$lt: ObjectId(nextId)}
         }
 
-        const products = await this.mongoDB.get(this.collection, query, options)
+        let products = await this.mongoDB.get(this.collection, query, options)
+        products = products.map(product => {
+            let changedId = {
+                ...product,
+                id: product._id
+            }
+            delete changedId._id
+            return changedId
+        })
         return products || []
     }
 
