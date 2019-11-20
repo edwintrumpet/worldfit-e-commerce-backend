@@ -19,19 +19,25 @@ const users = [
         rol: 'admin'
     },
     {
-        name: 'angie',
-        email: 'angie@mail.com',
-        password: 'angiekey',
+        name: 'sebastián',
+        email: 'sebastian@mail.com',
+        password: 'sebastianKey',
+        rol: 'admin'
+    },
+    {
+        name: 'lucía',
+        email: 'lucia@mail.com',
+        password: 'luciaKey',
         rol: 'collaborator'
     },
     {
-        name: 'lucia vanegas',
-        email: 'lucia@mail.com',
-        password: 'luciakey',
+        name: 'camilo',
+        email: 'camilo@mail.com',
+        password: 'camiloKey',
         rol: 'client'
     },
     {
-        name: 'alejandra patiño',
+        name: 'alejandra',
         email: 'alejandra@mail.com',
         password: 'alejandrakey',
         rol: 'client'

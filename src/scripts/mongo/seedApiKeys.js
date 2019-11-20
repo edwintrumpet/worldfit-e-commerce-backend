@@ -1,4 +1,5 @@
 // DEBUG=app:* node src/scripts/mongo/seedApiKeys.js
+// Se usarán posteriormente en server side rendering
 
 const chalk = require('chalk')
 const crypto = require('crypto')
