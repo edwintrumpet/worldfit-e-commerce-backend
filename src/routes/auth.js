@@ -16,10 +16,6 @@ function authApi(app){
     app.use('/api/auth', router)
     const usersServices = new UsersServices()
 
-    router.post('/test', (req, res) => {
-        res.status(200).json({message: "all ok"})
-    })
-
     router.post('/sign-in', async (req, res, next) => {
         passport.authenticate('basic', (err, user) => {
             try {

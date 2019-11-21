@@ -20,12 +20,12 @@ function usersRoutes(app) {
 
     router.get(
         '/',
-        validationHandler(listUsersSchema),
+        validationHandler(listUsersSchema, 'query'),
         passport.authenticate('jwt', { session: false }),
         scopesValidationHandler(['list:users']),
         async (req, res, next) => {
         try{
-            const users = await usersServices.getMany(req.body)
+            const users = await usersServices.getMany(req.query)
             res.status(200).json({data: users, message: 'User list'})
         }catch(err){
             next(err)
