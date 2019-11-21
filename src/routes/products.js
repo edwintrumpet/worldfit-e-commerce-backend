@@ -19,10 +19,10 @@ function productsRoutes(app) {
 
     router.get(
         '/',
-        validationHandler(listProductsSchema),
+        validationHandler(listProductsSchema, 'query'),
         async (req, res, next) => {
         try {
-            const products = await productsService.getProducts(req.body)
+            const products = await productsService.getProducts(req.query)
             res.status(200).json({data: products, message: 'Products listed'})
         }catch(err) {
             next(err)
